@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
         // string name, float cooldown, int magazineSize, float reloadTime, float weaponSpread, GameObject bulletPrefab
         guns.Add(new Guns("Glock", .05f, 17, 1.5f, .1f, lightBulletPrefab));
         guns.Add(new Guns("AK-47", .1f, 30, 3f, .2f, mediumBulletPrefab));
+        reloadingIndicator.GetComponent<TextMeshPro>().text = 
+                $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
     }
 
 
@@ -95,6 +98,8 @@ public class PlayerMovement : MonoBehaviour
             Quaternion rotation = transform.rotation;
             rotation.z += Random.Range(-guns[equippedWeapon].weaponSpread, guns[equippedWeapon].weaponSpread);
             Instantiate(guns[equippedWeapon].bulletPrefab, bulletOrigin, rotation);
+            reloadingIndicator.GetComponent<TextMeshPro>().text = 
+                $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
         } else if (guns[equippedWeapon].bulletsLeft == 0 && !guns[equippedWeapon].reloading) {
             guns[equippedWeapon].Reload();
         }
@@ -109,22 +114,23 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown("q")) {
             if (guns[equippedWeapon].reloading) {
                 guns[equippedWeapon].InterruptReload();
-                reloadingIndicator.GetComponent<MeshRenderer>().enabled = false;
             }
             equippedWeapon--;
             if (equippedWeapon < 0) {
                 equippedWeapon = guns.Count - 1;
             } 
-            equippedWeapon %= guns.Count;
+            reloadingIndicator.GetComponent<TextMeshPro>().text = 
+                $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
         } else if (Input.GetKeyDown("e")) {
             if (guns[equippedWeapon].reloading) {
                 guns[equippedWeapon].InterruptReload();
-                reloadingIndicator.GetComponent<MeshRenderer>().enabled = false;
             }
             equippedWeapon++;
             if (equippedWeapon >= guns.Count) {
                 equippedWeapon = 0;
             }
+            reloadingIndicator.GetComponent<TextMeshPro>().text = 
+                $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
         }
     }
 
@@ -135,11 +141,12 @@ public class PlayerMovement : MonoBehaviour
     */
     void WeaponReloading() {
         if (guns[equippedWeapon].reloading) {
-            reloadingIndicator.GetComponent<MeshRenderer>().enabled = true;
+            reloadingIndicator.GetComponent<TextMeshPro>().text = "Reloading";
             if (Time.time >= guns[equippedWeapon].reloadFinishIn) {
                 guns[equippedWeapon].bulletsLeft = guns[equippedWeapon].magazineSize;
                 guns[equippedWeapon].reloading = false;
-                reloadingIndicator.GetComponent<MeshRenderer>().enabled = false;
+                reloadingIndicator.GetComponent<TextMeshPro>().text = 
+                    $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
             }
         }
     }
