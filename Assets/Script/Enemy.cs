@@ -11,17 +11,19 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float nextAttackIn;
     [SerializeField] private int experience;
     [SerializeField] private int money;
+    GameObject player;
     
 
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");    
         nextAttackIn = Time.time;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);        
     }
 
     public void TakeDamage(float damage) {

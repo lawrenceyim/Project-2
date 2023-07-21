@@ -186,11 +186,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSpeed: 5
   interactDistance: 1
-  bulletPrefab: {fileID: 255005758417269253, guid: 55b21466347526449a03fb8c2ee93225, type: 3}
+  lightBulletPrefab: {fileID: 255005758417269253, guid: 55b21466347526449a03fb8c2ee93225, type: 3}
+  mediumBulletPrefab: {fileID: 255005758417269253, guid: cf5a551cbe1f1b146a393c8af107e692, type: 3}
   bulletOrigin: {x: 0, y: 0, z: 0}
-  nextShotIn: 0
-  weaponCooldown: 0
-  weaponSpread: 0
+  equippedWeapon: 0
 --- !u!58 &1575562503879002703
 CircleCollider2D:
   m_ObjectHideFlags: 0
