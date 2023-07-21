@@ -12,11 +12,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector3 bulletOrigin;
     private List<Guns> guns;
     [SerializeField] private int equippedWeapon;
-    // private GameObject reloadingIndicator;
+    private GameObject reloadingIndicator;
 
     void Start()
     {
-        // reloadingIndicator = GameObject.FindGameObjectWithTag("Reloading Indicator");
+        reloadingIndicator = GameObject.FindGameObjectWithTag("Reloading Indicator");
         equippedWeapon = 0;
         guns = new List<Guns>();
         // Initialize with rifle and pistol for now
@@ -95,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
             Quaternion rotation = transform.rotation;
             rotation.z += Random.Range(-guns[equippedWeapon].weaponSpread, guns[equippedWeapon].weaponSpread);
             Instantiate(guns[equippedWeapon].bulletPrefab, bulletOrigin, rotation);
-        } else if (guns[equippedWeapon].bulletsLeft == 0) {
+        } else if (guns[equippedWeapon].bulletsLeft == 0 && !guns[equippedWeapon].reloading) {
             guns[equippedWeapon].Reload();
         }
     }
@@ -109,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown("q")) {
             if (guns[equippedWeapon].reloading) {
                 guns[equippedWeapon].InterruptReload();
+                reloadingIndicator.GetComponent<MeshRenderer>().enabled = false;
             }
             equippedWeapon--;
             if (equippedWeapon < 0) {
@@ -118,6 +119,7 @@ public class PlayerMovement : MonoBehaviour
         } else if (Input.GetKeyDown("e")) {
             if (guns[equippedWeapon].reloading) {
                 guns[equippedWeapon].InterruptReload();
+                reloadingIndicator.GetComponent<MeshRenderer>().enabled = false;
             }
             equippedWeapon++;
             if (equippedWeapon >= guns.Count) {
@@ -133,13 +135,11 @@ public class PlayerMovement : MonoBehaviour
     */
     void WeaponReloading() {
         if (guns[equippedWeapon].reloading) {
-            // if (reloadingIndicator.GetComponent<MeshRenderer>().enabled == false) {
-            //     reloadingIndicator.GetComponent<MeshRenderer>().enabled = true;
-            // }
+            reloadingIndicator.GetComponent<MeshRenderer>().enabled = true;
             if (Time.time >= guns[equippedWeapon].reloadFinishIn) {
                 guns[equippedWeapon].bulletsLeft = guns[equippedWeapon].magazineSize;
                 guns[equippedWeapon].reloading = false;
-                // reloadingIndicator.GetComponent<MeshRenderer>().enabled = false;
+                reloadingIndicator.GetComponent<MeshRenderer>().enabled = false;
             }
         }
     }
