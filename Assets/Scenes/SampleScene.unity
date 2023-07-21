@@ -725,7 +725,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4690050915106880494, guid: 1b96f017157c38a46b1e8471b88d06a8, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8288591354161914498, guid: 1b96f017157c38a46b1e8471b88d06a8, type: 3}
       propertyPath: yOffset

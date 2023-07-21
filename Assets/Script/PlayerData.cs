@@ -10,8 +10,9 @@ public class PlayerData : MonoBehaviour
     private MoneyDisplay moneyDisplay;
 
     private void Start() {
+        money = 0;
+        experience = 0;
         moneyDisplay = GameObject.FindGameObjectWithTag("Money Indicator").GetComponent<MoneyDisplay>();
-        moneyDisplay.SetMoney(money);
     }
 
     public void TakeKillReward(int experience, int money) {
