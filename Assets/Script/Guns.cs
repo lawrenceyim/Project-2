@@ -39,7 +39,6 @@ public class Guns : MonoBehaviour
     }
 
     public void Reload() {
-        Debug.Log("Reloading");
         reloading = true;
         reloadFinishIn = Time.time + reloadTime;
         bulletsLeft = 0;
