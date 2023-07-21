@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - Bullet
   - Reloading Indicator
+  - Money Indicator
   layers:
   - Default
   - TransparentFX
