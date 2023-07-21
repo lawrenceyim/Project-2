@@ -6,15 +6,21 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float playerSpeed;
     [SerializeField] private float interactDistance = 1;
-    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject lightBulletPrefab;
+    [SerializeField] private GameObject mediumBulletPrefab;
+
     [SerializeField] private Vector3 bulletOrigin;
-    [SerializeField] private float nextShotIn;
-    [SerializeField] private float weaponCooldown;
-    [SerializeField] private float weaponSpread;
+    private List<Guns> guns;
+    [SerializeField] private int equippedWeapon;
 
     void Start()
     {
-        nextShotIn = Time.time;
+        equippedWeapon = 0;
+        guns = new List<Guns>();
+        // Initialize with rifle and pistol for now
+        // string name, float cooldown, int magazineSize, float reloadTime, float weaponSpread, GameObject bulletPrefab
+        guns.Add(new Guns("Glock", .05f, 17, 1.5f, .1f, lightBulletPrefab));
+        guns.Add(new Guns("AK-47", .1f, 30, 3f, .2f, mediumBulletPrefab));
     }
 
 
@@ -25,10 +31,8 @@ public class PlayerMovement : MonoBehaviour
     private void Update() {
         Aim();
         Fire();
-        if (Input.GetKeyDown("e")) {
-            Debug.Log("Interact");
-            Interact();
-        }
+        Reload();
+        SwitchWeapons();
     }
 
     /* 
@@ -38,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+        WeaponReloading();
     }
 
     private void Move() {
@@ -83,11 +88,46 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Fire() {
-        if (Input.GetMouseButton(0) && Time.time >= nextShotIn) {
+        if (Input.GetMouseButton(0) && guns[equippedWeapon].CanFire()) {
+            guns[equippedWeapon].Fire();
             Quaternion rotation = transform.rotation;
-            rotation.z += Random.Range(-weaponSpread, weaponSpread);
-            Instantiate(bulletPrefab, bulletOrigin, rotation);
-            nextShotIn = Time.time + weaponCooldown;
+            rotation.z += Random.Range(-guns[equippedWeapon].weaponSpread, guns[equippedWeapon].weaponSpread);
+            Instantiate(guns[equippedWeapon].bulletPrefab, bulletOrigin, rotation);
         }
+    }
+    void Reload() {
+        if (Input.GetKeyDown("r")) {
+            guns[equippedWeapon].Reload();
+        }
+    }
+
+    void SwitchWeapons() {
+        if (Input.GetKeyDown("q")) {
+            if (guns[equippedWeapon].reloading) {
+                guns[equippedWeapon].InterruptReload();
+            }
+            equippedWeapon--;
+            equippedWeapon %= guns.Count;
+        } else if (Input.GetKeyDown("e")) {
+            if (guns[equippedWeapon].reloading) {
+                guns[equippedWeapon].InterruptReload();
+            }
+            equippedWeapon++;
+            equippedWeapon %= guns.Count;
+        }
+    }
+
+
+    /*
+    This function is included in the PlayerMovement.cs instead of the Guns.cs because the Guns class is
+    not attached to a game object and therefore the Update function does not run for the instantiated Guns
+    */
+    void WeaponReloading() {
+        if (guns[equippedWeapon].reloading) {
+            if (Time.time >= guns[equippedWeapon].reloadFinishIn) {
+                guns[equippedWeapon].bulletsLeft = guns[equippedWeapon].magazineSize;
+                guns[equippedWeapon].reloading = false;
+            }
+        } 
     }
 }
