@@ -33,8 +33,6 @@ public class Enemy : MonoBehaviour
             for (int i = 0; i < players.Length; i++) {
                 players[i].GetComponent<PlayerData>().TakeKillReward(experience, money);
             }
-
-            // Give exp and gold to person who killed it?
             Destroy(gameObject);
         }
     }
