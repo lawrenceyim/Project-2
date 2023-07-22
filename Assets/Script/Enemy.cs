@@ -8,36 +8,28 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float damage;
     [SerializeField] private float attackCooldown;
-    [SerializeField] private float nextAttackIn;
     [SerializeField] private int experience;
     [SerializeField] private int money;
     [SerializeField] private float attackRange;
     [SerializeField] Sprite attackSprite;
     [SerializeField] Sprite moveSprite;
-    private float attackEndIn;
-    private bool attacking;
-    private float attackDuration = .25f;
+    public Animator animator;
+    private float lastAttack;
 
     private GameObject player;
     private Rigidbody2D rb;
 
     void Start()
     {
+        animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");    
-        nextAttackIn = Time.time;
         rb = GetComponent<Rigidbody2D>();
+        lastAttack = Time.time;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (attacking && Time.time < attackEndIn) {
-            return;
-        } else {
-            attacking = false;
-            GetComponent<SpriteRenderer>().sprite = moveSprite;
-            return;
-        }
         Move();
         Attack();
     }
@@ -62,14 +54,13 @@ public class Enemy : MonoBehaviour
     }
 
     private void Attack() {
-        if (attacking || Time.time < nextAttackIn) {
+        if (Time.time - lastAttack < attackCooldown) {
             return;
         }
         if (Vector2.Distance(player.transform.position, transform.position) <= attackRange) {
-            nextAttackIn = Time.time + attackCooldown;
-            GetComponent<SpriteRenderer>().sprite = attackSprite;
-            attackEndIn = Time.time + attackDuration;
+            lastAttack = Time.time;
             player.GetComponent<PlayerData>().DecreaseHealth(damage);
+            animator.SetBool("IsAttacking", true);
         }
     }
 }

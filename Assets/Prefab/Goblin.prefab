@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7946474712873788365}
   - component: {fileID: 7917909887470155379}
   - component: {fileID: 1051421364673480489}
+  - component: {fileID: 2159383766180919957}
   m_Layer: 0
   m_Name: Goblin
   m_TagString: Enemy
@@ -100,15 +101,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 5
-  speed: 25
+  speed: 20
   damage: 1
   attackCooldown: 3
-  nextAttackIn: 0
   experience: 1
   money: 10
   attackRange: 1
   attackSprite: {fileID: 21300000, guid: 1b1347df20570aa4480ce75081eef909, type: 3}
   moveSprite: {fileID: 21300000, guid: f351677ff10903347ad6b11a95d348ba, type: 3}
+  animator: {fileID: 0}
 --- !u!58 &7917909887470155379
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -171,3 +172,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!95 &2159383766180919957
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488365501443460589}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dce9cad8e35f9d949b87c4ee79c518dc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
