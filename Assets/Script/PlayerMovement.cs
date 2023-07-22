@@ -9,14 +9,20 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float interactDistance = 1;
     [SerializeField] private GameObject lightBulletPrefab;
     [SerializeField] private GameObject mediumBulletPrefab;
-
+    private Rigidbody2D rb;
     [SerializeField] private Vector3 bulletOrigin;
+    private GameObject reloadingIndicator;
+    [SerializeField] private float maxHealth;
+    [SerializeField] private float currentHealth;
+    [SerializeField] private float armor;
     private List<Guns> guns;
     [SerializeField] private int equippedWeapon;
-    private GameObject reloadingIndicator;
+    
+
 
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         reloadingIndicator = GameObject.FindGameObjectWithTag("Reloading Indicator");
         equippedWeapon = 0;
         guns = new List<Guns>();
@@ -25,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
         guns.Add(new Guns("Glock", .05f, 17, 1.5f, .1f, lightBulletPrefab));
         guns.Add(new Guns("AK-47", .1f, 30, 3f, .2f, mediumBulletPrefab));
         reloadingIndicator.GetComponent<TextMeshPro>().text = 
-                $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
+                $"{guns[equippedWeapon].name} {guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
     }
 
 
@@ -51,25 +57,25 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void Move() {
-        int xMovement = 0;
-        int yMovement = 0;
-        float movementVector = playerSpeed * Time.deltaTime;
+        float xMovement = 0;
+        float yMovement = 0;
+        float movementVector = playerSpeed;
         if (Input.GetKey("w")) {
-            yMovement += 1;
+            yMovement += 1f;
         }
         if (Input.GetKey("s")) {
-            yMovement -= 1;
+            yMovement -= 1f;
         }
         if (Input.GetKey("a")) {
-            xMovement -= 1;
+            xMovement -= 1f;
         }
         if (Input.GetKey("d")) {
-            xMovement += 1;
+            xMovement += 1f;
         }
         if (xMovement != 0 && yMovement != 0) {
-            movementVector = Mathf.Sqrt(playerSpeed * playerSpeed / 2)  * Time.deltaTime;
+            movementVector = Mathf.Sqrt(playerSpeed * playerSpeed / 2);
         }
-        transform.position = new Vector3(transform.position.x + movementVector * xMovement, transform.position.y + movementVector * yMovement, transform.position.z);
+        rb.MovePosition(transform.position + new Vector3(xMovement * movementVector, yMovement * movementVector, 0f) * Time.deltaTime);
     }
 
     private void Interact() {
@@ -98,8 +104,7 @@ public class PlayerMovement : MonoBehaviour
             Quaternion rotation = transform.rotation;
             rotation.z += Random.Range(-guns[equippedWeapon].weaponSpread, guns[equippedWeapon].weaponSpread);
             Instantiate(guns[equippedWeapon].bulletPrefab, bulletOrigin, rotation);
-            reloadingIndicator.GetComponent<TextMeshPro>().text = 
-                $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
+            reloadingIndicator.GetComponent<TextMeshPro>().text = GetNameAmmo();
         } else if (guns[equippedWeapon].bulletsLeft == 0 && !guns[equippedWeapon].reloading) {
             guns[equippedWeapon].Reload();
         }
@@ -119,8 +124,7 @@ public class PlayerMovement : MonoBehaviour
             if (equippedWeapon < 0) {
                 equippedWeapon = guns.Count - 1;
             } 
-            reloadingIndicator.GetComponent<TextMeshPro>().text = 
-                $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
+            reloadingIndicator.GetComponent<TextMeshPro>().text = GetNameAmmo();
         } else if (Input.GetKeyDown("e")) {
             if (guns[equippedWeapon].reloading) {
                 guns[equippedWeapon].InterruptReload();
@@ -129,8 +133,7 @@ public class PlayerMovement : MonoBehaviour
             if (equippedWeapon >= guns.Count) {
                 equippedWeapon = 0;
             }
-            reloadingIndicator.GetComponent<TextMeshPro>().text = 
-                $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
+            reloadingIndicator.GetComponent<TextMeshPro>().text = GetNameAmmo();
         }
     }
 
@@ -141,13 +144,19 @@ public class PlayerMovement : MonoBehaviour
     */
     void WeaponReloading() {
         if (guns[equippedWeapon].reloading) {
-            reloadingIndicator.GetComponent<TextMeshPro>().text = "Reloading";
+            reloadingIndicator.GetComponent<TextMeshPro>().text = GetNameAmmo();
             if (Time.time >= guns[equippedWeapon].reloadFinishIn) {
                 guns[equippedWeapon].bulletsLeft = guns[equippedWeapon].magazineSize;
                 guns[equippedWeapon].reloading = false;
-                reloadingIndicator.GetComponent<TextMeshPro>().text = 
-                    $"{guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
+                reloadingIndicator.GetComponent<TextMeshPro>().text = GetNameAmmo();
             }
         }
+    }
+
+    string GetNameAmmo() {
+        if (guns[equippedWeapon].reloading) {
+            return $"{guns[equippedWeapon].name} reloading";
+        }
+        return $"{guns[equippedWeapon].name} {guns[equippedWeapon].bulletsLeft} / {guns[equippedWeapon].magazineSize}";
     }
 }

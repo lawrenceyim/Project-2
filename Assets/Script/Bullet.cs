@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float speed;
+    [SerializeField] private float force;
     [SerializeField] private float damage;
     [SerializeField] private float range;
     private Vector2 origin;
@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviour
     {
         origin = transform.position;
         rb = GetComponent<Rigidbody2D>();
-        rb.AddForce(transform.up * speed, ForceMode2D.Impulse);
+        rb.AddForce(transform.up * force, ForceMode2D.Impulse);
     }
 
     void FixedUpdate()

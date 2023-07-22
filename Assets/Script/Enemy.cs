@@ -11,19 +11,20 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float nextAttackIn;
     [SerializeField] private int experience;
     [SerializeField] private int money;
-    GameObject player;
-    
+    private GameObject player;
+    private Rigidbody2D rb;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");    
         nextAttackIn = Time.time;
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);        
+        Move();
     }
 
     public void TakeDamage(float damage) {
@@ -35,5 +36,12 @@ public class Enemy : MonoBehaviour
             }
             Destroy(gameObject);
         }
+    }
+
+    private void Move() {
+        Vector3 direction = player.transform.position - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        rb.rotation = angle - 90;
+        rb.MovePosition(transform.position + (direction * speed * Time.deltaTime));
     }
 }
