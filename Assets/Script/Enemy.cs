@@ -58,6 +58,7 @@ public class Enemy : MonoBehaviour
             return;
         }
         if (Vector2.Distance(player.transform.position, transform.position) <= attackRange) {
+            Debug.Log("Attacked");
             lastAttack = Time.time;
             player.GetComponent<PlayerData>().DecreaseHealth(damage);
             animator.SetBool("IsAttacking", true);
