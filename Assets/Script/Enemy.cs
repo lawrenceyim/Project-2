@@ -8,23 +8,30 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float damage;
     [SerializeField] private float attackCooldown;
-    [SerializeField] private float nextAttackIn;
     [SerializeField] private int experience;
     [SerializeField] private int money;
+    [SerializeField] private float attackRange;
+    [SerializeField] Sprite attackSprite;
+    [SerializeField] Sprite moveSprite;
+    public Animator animator;
+    private float lastAttack;
+
     private GameObject player;
     private Rigidbody2D rb;
 
     void Start()
     {
+        animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");    
-        nextAttackIn = Time.time;
         rb = GetComponent<Rigidbody2D>();
+        lastAttack = Time.time;
     }
 
     // Update is called once per frame
     void Update()
     {
         Move();
+        Attack();
     }
 
     public void TakeDamage(float damage) {
@@ -40,8 +47,21 @@ public class Enemy : MonoBehaviour
 
     private void Move() {
         Vector3 direction = player.transform.position - transform.position;
+        direction.Normalize();
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         rb.rotation = angle - 90;
         rb.MovePosition(transform.position + (direction * speed * Time.deltaTime));
+    }
+
+    private void Attack() {
+        if (Time.time - lastAttack < attackCooldown) {
+            return;
+        }
+        if (Vector2.Distance(player.transform.position, transform.position) <= attackRange) {
+            Debug.Log("Attacked");
+            lastAttack = Time.time;
+            player.GetComponent<PlayerData>().DecreaseHealth(damage);
+            animator.SetBool("IsAttacking", true);
+        }
     }
 }
