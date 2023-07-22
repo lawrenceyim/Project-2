@@ -12,9 +12,6 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField] private Vector3 bulletOrigin;
     private GameObject reloadingIndicator;
-    [SerializeField] private float maxHealth;
-    [SerializeField] private float currentHealth;
-    [SerializeField] private float armor;
     private List<Guns> guns;
     [SerializeField] private int equippedWeapon;
     

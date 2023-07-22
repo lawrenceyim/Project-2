@@ -11,6 +11,13 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float nextAttackIn;
     [SerializeField] private int experience;
     [SerializeField] private int money;
+    [SerializeField] private float attackRange;
+    [SerializeField] Sprite attackSprite;
+    [SerializeField] Sprite moveSprite;
+    private float attackEndIn;
+    private bool attacking;
+    private float attackDuration = .25f;
+
     private GameObject player;
     private Rigidbody2D rb;
 
@@ -24,7 +31,15 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (attacking && Time.time < attackEndIn) {
+            return;
+        } else {
+            attacking = false;
+            GetComponent<SpriteRenderer>().sprite = moveSprite;
+            return;
+        }
         Move();
+        Attack();
     }
 
     public void TakeDamage(float damage) {
@@ -40,8 +55,21 @@ public class Enemy : MonoBehaviour
 
     private void Move() {
         Vector3 direction = player.transform.position - transform.position;
+        direction.Normalize();
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         rb.rotation = angle - 90;
         rb.MovePosition(transform.position + (direction * speed * Time.deltaTime));
+    }
+
+    private void Attack() {
+        if (attacking || Time.time < nextAttackIn) {
+            return;
+        }
+        if (Vector2.Distance(player.transform.position, transform.position) <= attackRange) {
+            nextAttackIn = Time.time + attackCooldown;
+            GetComponent<SpriteRenderer>().sprite = attackSprite;
+            attackEndIn = Time.time + attackDuration;
+            player.GetComponent<PlayerData>().DecreaseHealth(damage);
+        }
     }
 }
